@@ -2,10 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum'])->group(function(){
+//Homepage
+Route::get('/', [TaskController::class, 'index'])->name('dashboard');
 
-});
+//Task Actions
+Route::post('/tasks', [TaskController::class, 'store'])->name('task.store');
+Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('task.show');
+Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('task.update');
+Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
 
-Route::view('/login', 'auth.login')->name('login');
-Route::view('/register', 'auth.register')->name('register');
-Route::view('/', 'dashboard')->name('dashboard');
+//Auth routes (login/register)
+Route::get('/login', function() {return view('login'); })->name('login');
+Route::get('/register', function() {return view('register'); })->name('register');
