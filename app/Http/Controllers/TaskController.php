@@ -9,15 +9,18 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    // public function __construct(){
-    //     $this->middleware('auth');
-    // }
+    public function __construct(){
+        //$this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return response()->json(Task::all());
+        $tasks = Task::with('category')->latest()->get();
+        $categories = Category::all();
+
+        return view ('index', compact('tasks', 'categories'));
     }
 
     /**
@@ -34,11 +37,11 @@ class TaskController extends Controller
             'category_id'=>'required|exists:categories,id',
         ]);
 
-        $validated['user_id'] = $request->user()->id;
+        $validated['user_id'] = Auth::id() ?? 1;
 
         $task = Task::create($validated);
 
-        return response()->json($task, 201);
+        return response()->route('dashboard')->with('success', 'Task Created!');
     }
 
     /**
@@ -47,7 +50,7 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         // $this->authorzie('update', $task);
-        return response()->json($task);
+        return response()->json($task->load('category'));
     }
 
     /**
@@ -57,18 +60,18 @@ class TaskController extends Controller
     {
         //$this->authorize('update', $task);
 
-        // $request->validate([
-        //     'title'=>'required|string|max:255',
-        //     'desciprion'=>'nullable|string',
-        //     'status'=>'required|in:pending,completed',
-        //     'priority'=>'required|in:high,medium,low',
-        //     'due_date'=>'nullable|date',
-        //     'category_id'=>'nullable|exists:categories,id',
-        // ]);
+        $validated = $request->validate([
+            'title'=>'required|string|max:255',
+            'desciprion'=>'nullable|string',
+            'status'=>'required|in:pending,completed',
+            'priority'=>'required|in:high,medium,low',
+            'due_date'=>'nullable|date',
+            'category_id'=>'nullable|exists:categories,id',
+        ]);
 
-        $task->update($request->all());
+        $task->update($validated);
 
-        return response()->json($task);
+        return response()->json(['message' => 'Task Updated', 'task' => $task]);
     }
 
     /**
