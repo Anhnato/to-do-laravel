@@ -20,7 +20,7 @@ class TaskController extends Controller
         $tasks = Task::with('category')->latest()->get();
         $categories = Category::all();
 
-        return view ('index', compact('tasks', 'categories'));
+        return view ('dashboard', compact('tasks', 'categories'));
     }
 
     /**
@@ -41,7 +41,7 @@ class TaskController extends Controller
 
         $task = Task::create($validated);
 
-        return response()->route('dashboard')->with('success', 'Task Created!');
+        return redirect()->route('dashboard')->with('success', 'Task Created!');
     }
 
     /**

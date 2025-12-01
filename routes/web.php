@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 //Homepage
@@ -12,5 +13,5 @@ Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('task.updat
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
 
 //Auth routes (login/register)
-Route::get('/login', function() {return view('login'); })->name('login');
-Route::get('/register', function() {return view('register'); })->name('register');
+Route::get('/login', function() {return view('auth.login'); })->name('login');
+Route::get('/register', function() {return view('auth.register'); })->name('register');
