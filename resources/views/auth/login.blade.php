@@ -24,14 +24,21 @@
             <p class="text-gray-500">Welcome back! Please login to continue.</p>
         </div>
 
-        <form class="space-y-5">
+        <form action="{{ route('login.submit') }}" method="post" class="space-y-5">
+            @csrf
+
+            @if ($errors->any())
+                <div class="bg-red-50 text-red-500 p-3 rounded-xl text-sm font-bold">
+                    {{ $errors->first() }}
+                </div>
+            @endif
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2 pl-1">Email Address</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                         <i class="fa-solid fa-envelope"></i>
                     </span>
-                    <input type="email" placeholder="you@example.com"
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required
                         class="w-full pl-11 pr-4 py-4 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 ring-amber-400 outline-none transition">
                 </div>
             </div>
@@ -42,7 +49,7 @@
                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                         <i class="fa-solid fa-lock"></i>
                     </span>
-                    <input type="password" placeholder="••••••••"
+                    <input type="password" name="password" placeholder="••••••••" required
                         class="w-full pl-11 pr-4 py-4 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 ring-amber-400 outline-none transition">
                 </div>
             </div>

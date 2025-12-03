@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    // public function __construct(){
-    //     $this->middleware('auth');
-    // }
     /**
      * Display a listing of the resource.
      */
@@ -37,7 +34,7 @@ class TaskController extends Controller
             'category_id'=>'required|exists:categories,id',
         ]);
 
-        $validated['user_id'] = Auth::id() ?? 1;
+        $validated['user_id'] = $request->user()->id;
 
         $task = Task::create($validated);
 

@@ -24,16 +24,21 @@
             <p class="text-gray-500">Create your account to start organizing.</p>
         </div>
 
-        <form class="space-y-4">
+        <form action="{{ route('register.submit') }}" method="post" class="space-y-4">
+            @csrf
+
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2 pl-1">Full Name</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                         <i class="fa-solid fa-user"></i>
                     </span>
-                    <input type="text" placeholder="John Doe"
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="John Doe" required
                         class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 ring-amber-400 outline-none transition">
                 </div>
+                @error('name')
+                    <p class="text-red-500 text-xs mt-1 pl-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -42,9 +47,12 @@
                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                         <i class="fa-solid fa-envelope"></i>
                     </span>
-                    <input type="email" placeholder="you@example.com"
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required
                         class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 ring-amber-400 outline-none transition">
                 </div>
+                @error('email')
+                    <p class="text-red-500 text-xs mt-1 pl-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -53,9 +61,12 @@
                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                         <i class="fa-solid fa-lock"></i>
                     </span>
-                    <input type="password" placeholder="Create a password"
+                    <input type="password" name="password" placeholder="Create a password" required
                         class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 ring-amber-400 outline-none transition">
                 </div>
+                @error('password')
+                    <p class="text-red-500 text-xs mt-1 pl-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -64,7 +75,7 @@
                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                         <i class="fa-solid fa-lock"></i>
                     </span>
-                    <input type="password" placeholder="Confirm password"
+                    <input type="password" name="password_confirmation" placeholder="Confirm password" required
                         class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 ring-amber-400 outline-none transition">
                 </div>
             </div>
