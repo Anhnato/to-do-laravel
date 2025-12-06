@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::middleware('auth:sanctum')->group(function(){
+Route::middleware('auth')->group(function(){
     Route::apiResource('categories',CategoryController::class);
     Route::apiResource('tasks',TaskController::class);
 });

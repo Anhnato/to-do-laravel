@@ -55,7 +55,7 @@
                 </button>
 
                 @auth
-                    <form action="{{ route('logout') }}" method="POST">
+                    <form action="{{ route('logout') }}" method="post">
                         @csrf
                         <button type="submit"
                             class="bg-white hover:bg-red-50 text-gray-800 hover:text-red-500 font-bold py-2 px-4 md:py-3 md:px-6 rounded-2xl shadow-lg transition transform hover:scale-105 flex items-center gap-2 border border-gray-100">
@@ -143,23 +143,57 @@
             @foreach ($tasks as $task)
                 <div x-data="{ title: '{{ addslashes($task->title) }}', desc: '{{ addslashes($task->description) }}' }"
                     x-show="title.toLowerCase().includes(search.toLowerCase()) || desc.toLowerCase().includes(search.toLowerCase())"
-                    class="bg-white p-4 rounded-2xl shadow-sm border border-yellow-100 hover:shadow-md transition flex items-center justify-between group">
-                    <div class="flex items-center gap-4">
-                        <div class="{{ $task->status == 'completed' ? 'text-green-500' : 'text-gray-300' }}">
+                    class="task-item bg-white p-4 rounded-2xl shadow-sm border border-yellow-100 hover:shadow-md transition flex flex-col md:flex-row md:items-center justify-between group gap-4">
+
+                    <div class="flex items-start md:items-center gap-4 flex-1">
+
+                        <div class="mt-1 md:mt-0 {{ $task->status == 'completed' ? 'text-green-500' : 'text-gray-300' }}">
                             <i class="fa-solid fa-circle-check text-xl"></i>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-gray-800">{{ $task->title }}</h3>
+
+                        <div class="flex-1 min-w-0"> <h3 class="font-bold text-lg text-gray-800 leading-tight">{{ $task->title }}</h3>
+                            <p class="task-desc text-sm text-gray-500 mt-1 truncate max-w-md">
+                                {{ Str::limit($task->description, 60) }}
+                            </p>
                         </div>
                     </div>
-                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button @click="openModal('edit', {{ $task->id }})"
-                            class="text-blue-500 hover:bg-blue-50 p-2 rounded-lg"><i class="fa-solid fa-pen"></i></button>
-                        <button @click="openModal('read', {{ $task->id }})"
-                            class="text-green-500 hover:bg-green-50 p-2 rounded-lg"><i class="fa-solid fa-eye"></i></button>
-                        <button @click="openModal('delete', {{ $task->id }})"
-                            class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+
+                    <div class="flex items-center gap-3 text-sm flex-wrap md:flex-nowrap">
+
+                        <div class="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100 text-gray-600 whitespace-nowrap">
+                            <i class="fa-regular fa-folder text-amber-500 text-xs"></i>
+                            <span>{{ $task->category->name ?? 'None' }}</span>
+                        </div>
+
+                        <div class="flex items-center gap-1 text-gray-500 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100 whitespace-nowrap">
+                            <i class="fa-regular fa-calendar text-gray-400 text-xs"></i>
+                            <span>{{ $task->due_date }}</span>
+                        </div>
+
+                        @php
+                            $colors = [
+                                'high' => 'bg-red-100 text-red-800',
+                                'medium' => 'bg-blue-100 text-blue-800',
+                                'low' => 'bg-green-100 text-green-800'
+                            ];
+                        @endphp
+                        <span class="{{ $colors[$task->priority] }} text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap uppercase">
+                            {{ ucfirst($task->priority) }}
+                        </span>
                     </div>
+
+                    <div class="flex gap-2 justify-end opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button @click="openModal('edit', {{ $task->id }})" class="text-blue-500 hover:bg-blue-50 p-2 rounded-lg" title="Edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button @click="openModal('read', {{ $task->id }})" class="text-green-500 hover:bg-green-50 p-2 rounded-lg" title="View">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button @click="openModal('delete', {{ $task->id }})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+
                 </div>
             @endforeach
         </div>
@@ -201,8 +235,8 @@
             <div x-show="!isLoading">
 
                 <template x-if="modalType === 'create'">
-                    <form action="{{ route('tasks.store') }}" method="POST" class="space-y-4">
-                        <input type="hidden" name="_token" :value="csrfToken">
+                    <form action="{{ route('task.store') }}" method="post" class="space-y-4">
+                        @csrf
 
                         <input type="text" name="title" placeholder="Task Title" required
                             class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 ring-amber-400 outline-none">
@@ -294,7 +328,8 @@
                                     x-text="activeTask.priority + ' Priority'"></span>
                                 <h3 class="text-xl font-bold text-gray-800" x-text="activeTask.title"></h3>
                                 <p class="text-sm text-gray-500 mt-1"><i class="fa-solid fa-calendar mr-1"></i> Due:
-                                    <span x-text="activeTask.due_date"></span></p>
+                                    <span x-text="activeTask.due_date"></span>
+                                </p>
                             </div>
                             <div class="mt-4">
                                 <p class="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Description</p>
@@ -327,24 +362,61 @@
                 <template x-if="modalType === 'category'">
                     <div>
                         <div class="flex gap-2 mb-4">
-                            <input type="text" placeholder="New Category Name"
+                            <input type="text"
+                                x-model="newCategoryName"
+                                @keydown.enter.prevent="createCategory()"
+                                placeholder="New Category Name"
                                 class="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 ring-amber-400 outline-none">
-                            <button class="bg-amber-500 text-white px-4 rounded-xl hover:bg-amber-600 shadow-md"><i
-                                    class="fa-solid fa-plus"></i></button>
+
+                            <button @click="createCategory()"
+                                    class="bg-amber-500 text-white px-4 rounded-xl hover:bg-amber-600 shadow-md transition transform active:scale-95">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
                         </div>
-                        <div class="space-y-2 max-h-60 overflow-y-auto">
+
+                        <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
                             <template x-for="cat in categories" :key="cat.id">
-                                <div
-                                    class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 hover:border-amber-200 transition">
                                     <span class="font-semibold text-gray-700" x-text="cat.name"></span>
-                                    <button class="text-red-400 hover:text-red-600"><i
-                                            class="fa-solid fa-trash"></i></button>
+
+                                    <button @click="confirmCategoryDelete(cat.id)" class="text-gray-400 hover:text-red-500 w-8 h-8 rounded-full hover:bg-red-50 transition">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
                                 </div>
                             </template>
+
+                            <div x-show="categories.length === 0" class="text-center text-gray-400 py-4 text-sm">
+                                No categories found. Add one above!
+                            </div>
                         </div>
                     </div>
                 </template>
 
+                <template x-if="modalType === 'deleteCategory'">
+                    <div class="text-center">
+                        <div class="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-triangle-exclamation text-2xl text-red-500"></i>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Delete Category?</h3>
+
+                        <p class="text-gray-500 text-sm mb-6">
+                            Are you sure? Tasks using this category will become "Uncategorized".
+                        </p>
+
+                        <div class="flex gap-3">
+                            <button @click="modalType = 'category'; categoryToDelete = null"
+                                    class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl hover:bg-gray-200 font-bold transition">
+                                Cancel
+                            </button>
+
+                            <button @click="submitCategoryDelete()"
+                                    class="flex-1 bg-red-500 text-white py-3 rounded-xl hover:bg-red-600 font-bold shadow-md transition transform active:scale-95">
+                                Yes, Delete
+                            </button>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -359,10 +431,76 @@
                 modalType: '',
                 isLoading: false,
                 categories: initialCategories,
+                newCategoryName: '',
+                categoryToDelete: null,
                 csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
 
                 // ACTIVE TASK HOLDER
                 activeTask: { id: null, title: '', description: '', due_date: '', status: '', priority: '', category_id: '' },
+
+                //Category Creation
+                async createCategory() {
+                    if (!this.newCategoryName.trim()) return; // Don't submit empty strings
+
+                    try {
+                        const response = await fetch('/categories', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': this.csrfToken
+                            },
+                            body: JSON.stringify({ name: this.newCategoryName })
+                        });
+
+                        if (!response.ok) throw new Error('Failed to create');
+
+                        const newCat = await response.json();
+
+                        // Add to the local list immediately (No page reload needed!)
+                        this.categories.push(newCat);
+
+                        // Clear input
+                        this.newCategoryName = '';
+                    } catch (e) {
+                        alert('Could not add category. It might already exist.');
+                    }
+                },
+
+                confirmCategoryDelete(id){
+                    this.categoryToDelete = id;
+                    this.modalType = 'deleteCategory';
+                },
+
+                //Category Delete
+                async submitCategoryDelete(id) {
+                    if (!this.categoryToDelete) return;
+
+                    try {
+                        const response = await fetch(`/categories/${this.categoryToDelete}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': this.csrfToken
+                            }
+                        });
+
+                        // 1. CHECK FOR SERVER ERRORS
+                        if (!response.ok) {
+                            throw new Error('Server Failed');
+                        }
+
+                        // 2. ONLY UPDATE UI IF SERVER SUCCESS
+                        this.categories = this.categories.filter(cat => cat.id !== this.categoryToDelete);
+
+                        // 3. RESET MODAL
+                        this.categoryToDelete = null;
+                        this.modalType = 'category';
+
+                    } catch (e) {
+                        console.error(e);
+                        alert('Failed to delete category. It might be in use or you might not have permission.');
+                    }
+                },
 
                 // METHODS
                 async openModal(type, taskId = null) {
@@ -398,6 +536,7 @@
                     this.modalOpen = false;
                     setTimeout(() => {
                         this.activeTask = { id: null, title: '', description: '', due_date: '', status: '', priority: '', category_id: '' };
+                        this.newCategoryName = '';
                     }, 300);
                 },
 
