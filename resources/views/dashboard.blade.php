@@ -108,10 +108,10 @@
                     </div>
 
                     <div>
-                        <h3 class="font-bold text-xl text-gray-800 mb-1">{{ $task->title }}</h3>
+                        <h3 class="font-bold text-xl text-gray-800 mb-1 truncate">{{ $task->title }}</h3>
                         <p class="text-gray-500 text-sm mb-3">
                             <i class="fa-regular fa-folder text-amber-500"></i> {{ $task->category->name ?? 'None' }} &bull;
-                            <i class="fa-regular fa-calendar"></i> {{ $task->due_date }}
+                            <i class="fa-regular fa-calendar"></i> {{ \Carbon\Carbon::parse($task->due_date)->format('M d, Y') }}
                         </p>
                         <p class="text-gray-600 text-sm mb-4 leading-relaxed">{{ Str::limit($task->description, 80) }}</p>
                     </div>
@@ -151,7 +151,7 @@
                             <i class="fa-solid fa-circle-check text-xl"></i>
                         </div>
 
-                        <div class="flex-1 min-w-0"> <h3 class="font-bold text-lg text-gray-800 leading-tight">{{ $task->title }}</h3>
+                        <div class="flex-1 min-w-0"> <h3 class="font-bold text-lg text-gray-800 leading-tight truncate">{{ $task->title }}</h3>
                             <p class="task-desc text-sm text-gray-500 mt-1 truncate max-w-md">
                                 {{ Str::limit($task->description, 60) }}
                             </p>
@@ -167,7 +167,7 @@
 
                         <div class="flex items-center gap-1 text-gray-500 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100 whitespace-nowrap">
                             <i class="fa-regular fa-calendar text-gray-400 text-xs"></i>
-                            <span>{{ $task->due_date }}</span>
+                            <span>{{ \Carbon\Carbon::parse($task->due_date)->format('M d, Y') }}</span>
                         </div>
 
                         @php
@@ -328,7 +328,7 @@
                                     x-text="activeTask.priority + ' Priority'"></span>
                                 <h3 class="text-xl font-bold text-gray-800" x-text="activeTask.title"></h3>
                                 <p class="text-sm text-gray-500 mt-1"><i class="fa-solid fa-calendar mr-1"></i> Due:
-                                    <span x-text="activeTask.due_date"></span>
+                                    <span x-text="formatDate(activeTask.due_date)"></span>
                                 </p>
                             </div>
                             <div class="mt-4">
@@ -377,7 +377,7 @@
                         <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
                             <template x-for="cat in categories" :key="cat.id">
                                 <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 hover:border-amber-200 transition">
-                                    <span class="font-semibold text-gray-700" x-text="cat.name"></span>
+                                    <span class="font-semibold text-gray-700 truncate" x-text="cat.name"></span>
 
                                     <button @click="confirmCategoryDelete(cat.id)" class="text-gray-400 hover:text-red-500 w-8 h-8 rounded-full hover:bg-red-50 transition">
                                         <i class="fa-solid fa-trash"></i>
@@ -538,6 +538,12 @@
                         this.activeTask = { id: null, title: '', description: '', due_date: '', status: '', priority: '', category_id: '' };
                         this.newCategoryName = '';
                     }, 300);
+                },
+
+                formatDate(dateString) {
+                    if (!dateString) return 'No Date';
+                    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                    return new Date(dateString).toLocaleDateString('en-US', options);
                 },
 
                 async submitUpdate() {

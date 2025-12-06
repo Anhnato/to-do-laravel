@@ -20,7 +20,7 @@ class Task extends Model
     ];
 
     protected $casts = [
-        'due_date'=>'date',
+        'due_date'=>'datetime:Y-m-d',
     ];
 
     public function user(){
