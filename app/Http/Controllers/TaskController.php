@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\TaskResource;
 use App\Models\Category;
 use App\Models\Task;
+use App\Notifications\TaskCreated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class TaskController extends Controller
 {
@@ -39,7 +40,12 @@ class TaskController extends Controller
 
         $task=Task::create($validated);
 
-        return new TaskResource($task);
+        $web_hook_url = env('WEB_HOOK_URL');
+
+        Notification::route('slack', $web_hook_url)
+            ->notify(new TaskCreated($task));
+
+        return redirect()->route('dashboard')->with('success', 'Task Created!');
     }
 
     /**
@@ -48,7 +54,7 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         if ($task->user_id !== Auth::id()) abort(403);
-        return new TaskResource($task->load('category'));
+        return $task->load('category');
     }
 
     /**
@@ -60,7 +66,7 @@ class TaskController extends Controller
 
         $validated = $request->validate([
             'title'=>'required|string|max:255',
-            'desciprion'=>'nullable|string',
+            'description'=>'nullable|string',
             'status'=>'required|in:pending,completed',
             'priority'=>'required|in:high,medium,low',
             'due_date'=>'nullable|date',

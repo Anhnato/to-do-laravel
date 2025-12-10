@@ -7,6 +7,16 @@
     <title>SunnyDay Tasks</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YWE8TTC2GK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-YWE8TTC2GK');
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
