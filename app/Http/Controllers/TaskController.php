@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TaskResource;
 use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -36,9 +37,9 @@ class TaskController extends Controller
 
         $validated['user_id'] = $request->user()->id;
 
-        Task::create($validated);
+        $task=Task::create($validated);
 
-        return redirect()->route('dashboard')->with('success', 'Task Created!');
+        return new TaskResource($task);
     }
 
     /**
@@ -46,8 +47,8 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        // $this->authorzie('update', $task);
-        return response()->json($task->load('category'));
+        if ($task->user_id !== Auth::id()) abort(403);
+        return new TaskResource($task->load('category'));
     }
 
     /**
