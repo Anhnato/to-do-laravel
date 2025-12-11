@@ -16,7 +16,11 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with('category')->latest()->get();
+        $tasks = Task::where('user_id', Auth::id())
+        ->with('category')
+        ->latest()
+        ->get();
+
         $categories = Category::all();
 
         return view ('dashboard', compact('tasks', 'categories'));
@@ -36,7 +40,7 @@ class TaskController extends Controller
             'category_id'=>'required|exists:categories,id',
         ]);
 
-        $validated['user_id'] = $request->user()->id;
+        $validated['user_id'] = Auth::id();
 
         $task=Task::create($validated);
 
@@ -53,7 +57,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        if ($task->user_id !== Auth::id()) abort(403);
+        if ($task->user_id !== Auth::id()) abort(403, 'You do not own this task');
         return $task->load('category');
     }
 
@@ -62,7 +66,9 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //$this->authorize('update', $task);
+        if($task->user_id !== Auth::id()){
+            abort(403, 'You do not own this task');
+        }
 
         $validated = $request->validate([
             'title'=>'required|string|max:255',
@@ -83,7 +89,9 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //$this->authorize('delete', $task);
+        if ($task->user_id !== Auth::id()) {
+            abort(403, 'You do not own this task');
+        }
         $task->delete();
 
         return response()->json(['message'=>'Deleted Successfully']);
