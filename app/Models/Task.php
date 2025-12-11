@@ -21,6 +21,8 @@ class Task extends Model
 
     protected $casts = [
         'due_date'=>'datetime:Y-m-d',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function user(){
@@ -29,27 +31,5 @@ class Task extends Model
 
     public function category(){
         return $this->belongsTo(Category::class);
-    }
-
-    //Scope
-    public function scopeByPriority($query, $priority){
-        return $query->where('priority', $priority);
-    }
-
-    public function scopeCompleted($query){
-        return $query->where('status', 'completed');
-    }
-
-    public function scopePending($query){
-        return $query->where('status', 'pending');
-    }
-
-    public function scopeDueToday($query){
-        return $query->whereDate('due_date', now()->toDateString());
-    }
-
-    public function scopeOverdue($query){
-        return $query->whereDate('due_date', '<', now()->toDateString())
-        ->where('status','pending');
     }
 }

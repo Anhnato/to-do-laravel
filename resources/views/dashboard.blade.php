@@ -130,7 +130,7 @@
                         Task</span>
                     <span x-show="modalType === 'read'"><i class="fa-solid fa-eye text-amber-500"></i> Task Details</span>
                     <span x-show="modalType === 'delete'"><i class="fa-solid fa-trash text-red-500"></i> Delete Task</span>
-                    <span x-show="modalType === 'category'">📦 Manage Categories</span>
+                    <span x-show="modalType === 'alert'">📦 Manage Categories</span>
                 </h2>
                 <button @click="closeModal()" class="text-gray-400 hover:text-gray-600"><i
                         class="fa-solid fa-xmark text-xl"></i></button>
@@ -162,6 +162,7 @@
                 newCategoryName: '',
                 categoryToDelete: null,
                 isCreatingCategory: false,
+                alertMessage: '',
                 csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
 
                 activeTask: { id: null, title: '', description: '', due_date: '', status: '', priority: '', category_id: '' },
@@ -209,6 +210,10 @@
                     this.modalOpen = false;
                     setTimeout(() => { this.activeTask = { id: null, title: '', description: '', due_date: '', status: '', priority: '', category_id: '' }; this.newCategoryName = ''; }, 300);
                 },
+                showError(message) {
+                    this.alertMessage = message;
+                    this.modalType = 'alert';
+                },
                 async createCategory() {
                     if (!this.newCategoryName.trim()) return;
                     if (this.isCreatingCategory) return; // Stop double clicks
@@ -237,9 +242,9 @@
 
                     } catch (e) {
                         if (e.message === 'Duplicate') {
-                            alert('You already have a category with this name!');
+                            this.showError('You already have a category with this name!');
                         } else {
-                            alert('Could not add category.');
+                            this.showError('Could not add category.');
                         }
                     } finally {
                         this.isCreatingCategory = false; // Unlock button

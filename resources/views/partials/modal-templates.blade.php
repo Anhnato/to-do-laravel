@@ -154,3 +154,20 @@
         </div>
     </div>
 </template>
+
+<template x-if="modalType === 'alert'">
+    <div class="text-center">
+        <div class="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-circle-exclamation text-2xl text-red-500"></i>
+        </div>
+
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Whoops!</h3>
+
+        <p class="text-gray-500 text-sm mb-6" x-text="alertMessage"></p>
+
+        <button @click="modalType = 'category'"
+            class="w-full bg-gray-800 text-white py-3 rounded-xl hover:bg-gray-900 font-bold shadow-md transition transform active:scale-95">
+            Okay, got it
+        </button>
+    </div>
+</template>

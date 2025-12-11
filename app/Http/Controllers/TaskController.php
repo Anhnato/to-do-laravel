@@ -21,7 +21,7 @@ class TaskController extends Controller
         ->latest()
         ->get();
 
-        $categories = Category::all();
+        $categories = Category::where('user_id', Auth::id())->get();
 
         return view ('dashboard', compact('tasks', 'categories'));
     }
@@ -37,17 +37,18 @@ class TaskController extends Controller
             'status'=>'required|in:pending,completed',
             'priority'=>'required|in:high,medium,low',
             'due_date'=>'nullable|date',
-            'category_id'=>'required|exists:categories,id',
+            'category_id'=>'nullable|exists:categories,id',
         ]);
 
-        $validated['user_id'] = Auth::id();
+        $task=Task::create([
+            ...$validated,
+        'user_id' => Auth::id(),
+        ]);
 
-        $task=Task::create($validated);
-
-        $web_hook_url = env('WEB_HOOK_URL');
-
-        Notification::route('slack', $web_hook_url)
-            ->notify(new TaskCreated($task));
+        if(config('services.slack.webhook_url')){
+            Notification::route('slack', config('services.slack.webhook_url'))
+                        ->notify(new TaskCreated($task));
+        }
 
         return redirect()->route('dashboard')->with('success', 'Task Created!');
     }
@@ -57,8 +58,10 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        if ($task->user_id !== Auth::id()) abort(403, 'You do not own this task');
-        return $task->load('category');
+        //Authentication ensure user owns the task
+        abort_if($task->user_id !== Auth::id(), 403, 'Unauthorized access to this task.');
+
+        return response()->json($task->load('category'), 200);
     }
 
     /**
@@ -66,9 +69,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        if($task->user_id !== Auth::id()){
-            abort(403, 'You do not own this task');
-        }
+        abort_if($task->user_id !== Auth::id(), 403, 'Unauthorized action.');
 
         $validated = $request->validate([
             'title'=>'required|string|max:255',
@@ -81,7 +82,7 @@ class TaskController extends Controller
 
         $task->update($validated);
 
-        return response()->json(['message' => 'Task Updated', 'task' => $task]);
+        return response()->json($task->load('category'), 200);
     }
 
     /**
@@ -89,11 +90,10 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        if ($task->user_id !== Auth::id()) {
-            abort(403, 'You do not own this task');
-        }
+        abort_if($task->user_id !== Auth::id(), 403, 'Unauthorized action.');
+
         $task->delete();
 
-        return response()->json(['message'=>'Deleted Successfully']);
+        return response()->json(null, 204);
     }
 }
