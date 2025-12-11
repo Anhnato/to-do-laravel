@@ -142,50 +142,6 @@
             </div>
 
             <div x-show="!isLoading">
-                <template x-if="modalType === 'create'">
-                    <form action="{{ route('tasks.store') }}" method="post" class="space-y-4">
-                        @csrf
-                        <input type="text" name="title" placeholder="Task Title" required
-                            class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 ring-amber-400 outline-none">
-                        <textarea name="description" placeholder="Description..."
-                            class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 ring-amber-400 outline-none h-24"></textarea>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Due Date</label><input
-                                    type="date" name="due_date"
-                                    class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 outline-none"></div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Category</label>
-                                <div class="flex gap-2">
-                                    <select name="category_id"
-                                        class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 outline-none">
-                                        <option value="" disabled selected>Select</option>
-                                        <template x-for="cat in categories" :key="cat.id">
-                                            <option :value="cat.id" x-text="cat.name"></option>
-                                        </template>
-                                    </select>
-                                    <button type="button" @click="modalType = 'category'"
-                                        class="bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 rounded-xl border border-amber-200"><i
-                                            class="fa-solid fa-plus"></i></button>
-                                </div>
-                            </div>
-                            <div><select name="status"
-                                    class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 outline-none">
-                                    <option value="pending">📝 Pending</option>
-                                    <option value="completed">✔ Completed</option>
-                                </select></div>
-                            <div><select name="priority"
-                                    class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 outline-none">
-                                    <option value="high">🔥 High</option>
-                                    <option value="medium" selected>✨ Medium</option>
-                                    <option value="low">🍃 Low</option>
-                                </select></div>
-                        </div>
-                        <button type="submit"
-                            class="w-full bg-gray-800 text-white text-lg font-bold py-3 rounded-xl hover:bg-gray-900 shadow-lg mt-2">Create
-                            Task</button>
-                    </form>
-                </template>
-
                 @include('partials.modal-templates')
             </div>
         </div>
@@ -205,6 +161,7 @@
                 tasks: initialTasks,
                 newCategoryName: '',
                 categoryToDelete: null,
+                isCreatingCategory: false,
                 csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
 
                 activeTask: { id: null, title: '', description: '', due_date: '', status: '', priority: '', category_id: '' },
@@ -237,8 +194,6 @@
                     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 },
 
-                // ... (Copy all your API methods: createCategory, submitCategoryDelete, openModal, closeModal, submitUpdate, submitDelete) ...
-                // Just paste the exact same JS methods you had before here
                 async openModal(type, taskId = null) {
                     this.modalType = type;
                     this.modalOpen = true;
@@ -281,6 +236,37 @@
                 async submitDelete() {
                     await fetch(`/tasks/${this.activeTask.id}`, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': this.csrfToken } });
                     location.reload();
+                },
+                async createCategory() {
+                    if (!this.newCategoryName.trim()) return;
+                    if (this.isCreatingCategory) return; //Stop double click
+
+                    this.isCreatingCategory = true; //lock button
+
+                    try {
+                        const response = await fetch('/categories', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': this.csrfToken
+                            },
+                            body: JSON.stringify({ name: this.newCategoryName })
+                        });
+
+                        if (!response.ok) {
+                            //Handle validation error (422) specially
+                            if (response.status === 422) throw new Error('Duplicate');
+                            throw new Error('Failed');
+                        }
+
+                        const newCat = await response.json();
+                        this.categories.push(newCat);
+                        this.newCategoryName = '';
+                    } catch (e) {
+                        if (e.message === 'Duplicate') {
+                            alert('You already have a category with this name!');
+                        }
+                    }
                 }
             }));
         });
