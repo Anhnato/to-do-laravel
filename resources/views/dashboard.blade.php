@@ -211,13 +211,39 @@
                 },
                 async createCategory() {
                     if (!this.newCategoryName.trim()) return;
+                    if (this.isCreatingCategory) return; // Stop double clicks
+
+                    this.isCreatingCategory = true; // Lock button
+
                     try {
-                        const response = await fetch('/categories', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrfToken }, body: JSON.stringify({ name: this.newCategoryName }) });
-                        if (!response.ok) throw new Error('Failed');
+                        const response = await fetch('/categories', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': this.csrfToken
+                            },
+                            body: JSON.stringify({ name: this.newCategoryName })
+                        });
+
+                        if (!response.ok) {
+                            // Handle validation error (422) specifically
+                            if (response.status === 422) throw new Error('Duplicate');
+                            throw new Error('Failed');
+                        }
+
                         const newCat = await response.json();
                         this.categories.push(newCat);
                         this.newCategoryName = '';
-                    } catch (e) { alert('Could not add category.'); }
+
+                    } catch (e) {
+                        if (e.message === 'Duplicate') {
+                            alert('You already have a category with this name!');
+                        } else {
+                            alert('Could not add category.');
+                        }
+                    } finally {
+                        this.isCreatingCategory = false; // Unlock button
+                    }
                 },
                 confirmCategoryDelete(id) { this.categoryToDelete = id; this.modalType = 'deleteCategory'; },
                 async submitCategoryDelete() {
@@ -237,37 +263,6 @@
                     await fetch(`/tasks/${this.activeTask.id}`, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': this.csrfToken } });
                     location.reload();
                 },
-                async createCategory() {
-                    if (!this.newCategoryName.trim()) return;
-                    if (this.isCreatingCategory) return; //Stop double click
-
-                    this.isCreatingCategory = true; //lock button
-
-                    try {
-                        const response = await fetch('/categories', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': this.csrfToken
-                            },
-                            body: JSON.stringify({ name: this.newCategoryName })
-                        });
-
-                        if (!response.ok) {
-                            //Handle validation error (422) specially
-                            if (response.status === 422) throw new Error('Duplicate');
-                            throw new Error('Failed');
-                        }
-
-                        const newCat = await response.json();
-                        this.categories.push(newCat);
-                        this.newCategoryName = '';
-                    } catch (e) {
-                        if (e.message === 'Duplicate') {
-                            alert('You already have a category with this name!');
-                        }
-                    }
-                }
             }));
         });
     </script>

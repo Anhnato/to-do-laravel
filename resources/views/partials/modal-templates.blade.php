@@ -116,9 +116,12 @@
             <input type="text" x-model="newCategoryName" @keydown.enter.prevent="createCategory()"
                 placeholder="New Category Name"
                 class="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 ring-amber-400 outline-none">
-            <button @click="createCategory()"
-                class="bg-amber-500 text-white px-4 rounded-xl hover:bg-amber-600 shadow-md transition transform active:scale-95"><i
-                    class="fa-solid fa-plus"></i></button>
+            <button @click="createCategory()" :disabled="isCreatingCategory"
+                :class="isCreatingCategory ? 'opacity-50 cursor-not-allowed' : 'hover:bg-amber-600 hover:scale-105'"
+                class="bg-amber-500 text-white px-4 rounded-xl shadow-md transition transform">
+
+                <i class="fa-solid" :class="isCreatingCategory ? 'fa-circle-notch fa-spin' : 'fa-plus'"></i>
+            </button>
         </div>
         <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
             <template x-for="cat in categories" :key="cat.id">
