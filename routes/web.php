@@ -31,3 +31,7 @@ Route::middleware('auth')->group(function(){
     //Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+Route::get('/crash', function(){
+    throw new Exception('This is a resr CRITICAL Eror!');
+});
