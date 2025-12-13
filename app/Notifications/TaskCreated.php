@@ -6,12 +6,19 @@ use App\Models\Task;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class TaskCreated extends Notification
+class TaskCreated extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable; //Handle tthe queue logic
 
     protected $task;
+
+    //Reliability: Retry 3 times if Slack is down
+    public $tries = 3;
+
+    //Reliability: Wait 10 seconds before trying
+    public $backoff = 10;
 
     /**
      * Create a new notification instance.
@@ -25,7 +32,7 @@ class TaskCreated extends Notification
      * Get the notification's delivery channels.
      *
      */
-    public function via($notifiable): array
+    public function via($notifiable)
     {
         return ['slack'];
     }
@@ -40,8 +47,13 @@ class TaskCreated extends Notification
             ->attachment(function($attachment){
                 $attachment->title($this->task->title)
                 ->content($this->task->description ?? 'No description')
-                ->field('Priority', ucfirst($this->task->prority), true)
+                ->field('Priority', ucfirst($this->task->priority), true)
                 ->field('Due Date', $this->task-> due_date ? $this->task->due_date->format('Y-m-d') : 'None', true);
             });
+    }
+
+    //Error handling: What to do if it fails 3 times
+    public function failed(\Throwable $e){
+        \Illuminate\Support\Facades\Log::error('Failed to send Slack notification for Task ' . $this->task->id);
     }
 }

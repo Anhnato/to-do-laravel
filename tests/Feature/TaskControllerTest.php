@@ -133,4 +133,33 @@ class TaskControllerTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
     }
+
+    /** @test */
+    public function user_can_create_task_and_notification_is_queued(){
+        Notification::fake();
+
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('task.store'), [
+            'title' => 'Async Task',
+        'status' => 'pending',
+        'priority' => 'high',
+        'category_id' => $category->id
+        ]);
+
+        //Assert the request was fast and successful
+        $response->assertRedirect(route('dashboard'));
+
+        //Assert Notification was pushed to the Queue
+        //We check assertSentTo but because we faked it, Laravel checks if it would have queued
+        Notification::assertSentTo(
+            new \Illuminate\Notifications\AnonymousNotifiable,
+            TaskCreated::class,
+            function ($notification, $channels){
+                //verify if targets the Slack channel
+                return in_array('slack', $channels);
+            }
+        );
+    }
 }
