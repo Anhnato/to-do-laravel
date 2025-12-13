@@ -30,7 +30,7 @@ class TaskController extends Controller
         $tasks = Task::where('user_id', $userId)
         ->with('category')
         ->latest()
-        ->get();
+        ->paginate(50);
 
         //return json for api, view for browser
         if($request->wantsJson()){
