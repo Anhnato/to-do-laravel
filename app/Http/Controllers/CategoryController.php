@@ -7,6 +7,7 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -41,9 +42,14 @@ class CategoryController extends Controller
     {
         abort_if($category->user_id !== Auth::id(), 403, 'You do not own this category.');
 
-        Task::where('category_id', $category->id)->update(['category_id' => null]);
+        //Start transaction
+        DB::transaction(function () use ($category){
+            //Unlink tasks
+            Task::where('category_id', $category->id)->update(['category_id' => null]);
 
-        $category->delete();
+            //Delete category
+            $category->delete();
+        });
 
         return response()->json(null, 204);
     }
