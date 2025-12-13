@@ -33,5 +33,18 @@ Route::middleware('auth')->group(function(){
 });
 
 Route::get('/crash', function(){
-    throw new Exception('This is a resr CRITICAL Eror!');
+    throw new Exception('This is a test CRITICAL Eror!');
+});
+
+Route::get('/test-slow-query', function(){
+    \Illuminate\Support\Facades\DB::select('
+        WITH RECURSIVE r(i) AS (
+            VALUES(0)
+            UNION ALL
+            SELECT i+1 FROM r WHERE i < 5000000
+        )
+        SELECT count(*) FROM r
+    ');
+
+    return "Done Sleeping";
 });
