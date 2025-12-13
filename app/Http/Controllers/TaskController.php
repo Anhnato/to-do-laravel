@@ -27,8 +27,9 @@ class TaskController extends Controller
         }
 
 
-        $tasks = Task::where('user_id', $userId)
-        ->with('category')
+        $tasks = Task::select(['id', 'title', 'status', 'priority', 'due_date', 'category_id', 'user_id'])
+        ->where('user_id', $userId)
+        ->with(['category:id,name'])
         ->latest()
         ->paginate(50);
 
