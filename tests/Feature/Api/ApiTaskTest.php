@@ -61,7 +61,7 @@ class ApiTaskTest extends TestCase
     /** @test */
     public function user_can_create_task_via_api(){
         $user = User::factory()->create();
-        Sanctum::actingAs($user, ['tasks:store']);
+        Sanctum::actingAs($user, ['tasks:write']);
 
         $response = $this->postJson('/api/tasks', [
             'title' => 'API Task',

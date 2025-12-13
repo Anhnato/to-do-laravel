@@ -20,9 +20,12 @@ class TaskController extends Controller
 
         // CHECK SCOPE (If using API Token)
         // If the user is logged in via Token, ensure they have 'read' scope
-        if ($request->user()->tokenCan('tasks:read') === false) {
-            abort(403, 'Token does not have read permissions.');
+        if($request->user()->currentAccessToken()){
+            if (! $request->user()->tokenCan('tasks:read')) {
+                abort(403, 'Token does not have read permissions.');
+            }
         }
+
 
         $tasks = Task::where('user_id', $userId)
         ->with('category')
@@ -64,7 +67,7 @@ class TaskController extends Controller
                         ->notify(new TaskCreated($task));
         }
 
-        if($request->wantsJson()){
+        if($request->wantsJson() || $request->is('api/*')){
             return response()->json($task, 201);
         }
 
@@ -115,9 +118,12 @@ class TaskController extends Controller
         abort_if($task->user_id !== Auth::id(), 403, 'Unauthorized action.');
 
         // CHECK SCOPE: Does this token have permission to write/delete?
-        if ($request->user()->tokenCan('tasks:write') === false) {
+        if($request->user()->currentAccessToken()){
+            if (! $request->user()->tokenCan('tasks:write') === false) {
             abort(403, 'Token is read-only.');
         }
+        }
+
 
         $task->delete();
 
