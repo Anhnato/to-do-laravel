@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('alpine-data')
-    taskApp({{ json_encode($categories) }}, {{ json_encode($tasks) }})
+    taskApp({{ json_encode($categories) }}, {{ json_encode($tasks->items()) }})
 @endsection
 
 @section('content')
@@ -31,26 +31,35 @@
         <div x-show="view === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <template x-for="task in filteredTasks" :key="task.id">
                 <div
-                    class="bg-white p-6 rounded-3xl shadow-lg border border-yellow-100 hover:shadow-xl transition flex flex-col justify-between h-full relative group">
-                    <div class="absolute top-4 right-4">
-                        <span :class="priorityColors[task.priority]"
-                            class="text-xs font-bold px-2 py-1 rounded-full capitalize" x-text="task.priority"></span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-xl text-gray-800 mb-1 truncate" :title="task.title" x-text="task.title">
+                    class="bg-white p-6 rounded-3xl shadow-lg border border-yellow-100 hover:shadow-xl transition flex flex-col justify-between h-full group">
+
+                    <div class="flex justify-between items-start gap-3 mb-1">
+
+                        <h3 class="font-bold text-xl text-gray-800 truncate min-w-0 flex-1" :title="task.title"
+                            x-text="task.title">
                         </h3>
+
+                        <span :class="priorityColors[task.priority]"
+                            class="text-xs font-bold px-2 py-1 rounded-full capitalize shrink-0" x-text="task.priority">
+                        </span>
+                    </div>
+
+                    <div>
                         <p class="text-gray-500 text-sm mb-3">
-                            <i class="fa-regular fa-folder text-amber-500"></i> <span
-                                x-text="getCategoryName(task.category_id)"></span> &bull;
-                            <i class="fa-regular fa-calendar"></i> <span x-text="formatDate(task.due_date)"></span>
+                            <i class="fa-regular fa-folder text-amber-500"></i>
+                            <span x-text="getCategoryName(task.category_id)"></span> &bull;
+                            <i class="fa-regular fa-calendar"></i>
+                            <span x-text="formatDate(task.due_date)"></span>
                         </p>
                         <p class="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3" x-text="task.description"></p>
                     </div>
+
                     <div class="pt-4 border-t border-gray-100 mt-auto">
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-semibold"
                                 :class="task.status === 'completed' ? 'text-green-600' : 'text-gray-500'"
                                 x-text="task.status === 'completed' ? '✔ Completed' : '📝 Pending'"></span>
+
                             <div class="flex gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button @click="openModal('edit', task.id)"
                                     class="text-blue-500 hover:bg-blue-50 p-2 rounded-lg"><i
@@ -64,6 +73,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </template>
         </div>
