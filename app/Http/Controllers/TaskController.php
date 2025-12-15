@@ -120,7 +120,7 @@ class TaskController extends Controller
 
         // CHECK SCOPE: Does this token have permission to write/delete?
         if($request->user()->currentAccessToken()){
-            if (! $request->user()->tokenCan('tasks:write') === false) {
+            if (! $request->user()->tokenCan('tasks:write')) {
             abort(403, 'Token is read-only.');
         }
         }

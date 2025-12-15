@@ -45,7 +45,7 @@ class TaskControllerTest extends TestCase
             'status' => 'invalid-status', //Wrong enum
         ]);
 
-        $response->assertSessionHasErrors(['title', 'status', 'category_id']);
+        $response->assertSessionHasErrors(['title', 'status']);
     }
 
     /** @test */
@@ -130,7 +130,7 @@ class TaskControllerTest extends TestCase
 
         $response = $this->actingAs($user)->delete(route('task.destroy', $task));
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
     }
 

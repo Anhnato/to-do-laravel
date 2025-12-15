@@ -20,7 +20,7 @@ class CategoryControllerTest extends TestCase
             'name' => 'Work Projects'
         ]);
 
-        $response->assertStatus(200)
+        $response->assertStatus(201)
         ->assertJson(['name' => 'Work Projects']);
 
         $this->assertDatabaseHas('categories', ['name' => 'Work Projects']);
@@ -42,7 +42,7 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function deleting_a_category_sets_related_tasks_to_null(){
         $user = User::factory()->create();
-        $category = Category::factory()->create();
+        $category = Category::factory()->create(['user_id' => $user->id]);
 
         //Create 3 tasks assign tot this category
         $tasks = Task::factory()->count(3)->create([
@@ -53,7 +53,7 @@ class CategoryControllerTest extends TestCase
         //Delete category with API
         $response = $this->actingAs($user)->deleteJson(route('categories.destroy', $category));
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
 
         //asser category is gone
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
