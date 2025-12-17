@@ -57,6 +57,7 @@ This project is a robust Task Management System built with **Laravel**. It allow
 ## 3. Database Schema
 
 The application uses a relational database design with three core tables.
+
 `users`
 
 -   `id` (Primary Key)
@@ -87,11 +88,15 @@ The application uses a relational database design with three core tables.
 I have implemented a comprehensive automated testing for unit tests and feature tests to ensure reliability and security without failed.
 
 **Unit Tests** (`tests/Unit/`)
+
 Focused on Model logic and Database interactions.
+
 ![Unit test report](Unit_test.png)
 
 **Feature Tests** (`tests/Feature/`)
+
 Focused on User Actions, Controllers and Security.
+
 ![Feature test report](Feature_test.png)
 
 **Total tests**: 29 passed ✅
