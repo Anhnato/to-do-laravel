@@ -22,8 +22,8 @@ This project is a robust Task Management System built with **Laravel**. It allow
 
 ### Backend
 
--   **Laravel 12.0**: Open-source web framework for building web application.
--   **PHP 8.2**: Open-source, server side, HTML embedded scripting language used to create dynamic web page.
+-   **Laravel**: Open-source web framework for building web application.
+-   **PHP**: Open-source, server side, HTML embedded scripting language used to create dynamic web page.
 -   **Scramble**: OpenAPI (Swagger) documentation generator for Laravel
 -   **Pulse**: Free, open-source, first-party package that provides a dashboard for real-time performance monitoring and insights into your Laravel application's usage and bottlenecks.
 -   **Sanctum**: A lightweight authentication system designed for Single Page Applications (SPAs), mobile applications, and simple token-based APIs.
