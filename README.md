@@ -57,42 +57,43 @@ This project is a robust Task Management System built with **Laravel**. It allow
 ## 3. Database Schema
 
 The application uses a relational database design with three core tables.
-<mark>users</mark>
+`users`
 
--   <mark>id</mark> (Primary Key)
--   <mark>name</mark>,<mark>email</mark>,<mark>password</mark>
--   <mark>timestamps</mark>
+-   `id` (Primary Key)
+-   `name`,`email`,`password`
+-   `timestamps`
 
-<mark>categories</mark>
+`categories`
 
--   <mark>id</mark> (Primary Key)
--   <mark>name</mark> (String)
--   <mark>user_id</mark> (Foregin Key -> users)
--   <mark>timestamps</mark>
+-   `id` (Primary Key)
+-   `name` (String)
+-   `user_id` (Foregin Key -> users)
+-   `timestamps`
 
-<mark>tasks</mark>
+`tasks`
 
--   <mark>id</mark> (Primary Key)
--   <mark>title</mark> (String)
--   <mark>description</mark> (Text, Nullable)
--   <mark>status</mark> (Enum: 'pending', 'completed')
--   <mark>priority</mark> (Enum: 'low', 'medium', 'high)
--   <mark>due_date</mark> (Date, Nullable, Cast to Carbon Instance)
--   <mark>user_id</mark> (Foregin Key -> users)
--   <mark>category_id</mark> (Foregin Key -> categories, Nullable)
--   <mark>timestamps</mark>
+-   `id` (Primary Key)
+-   `title` (String)
+-   `description` (Text, Nullable)
+-   `status` (Enum: 'pending', 'completed')
+-   `priority` (Enum: 'low', 'medium', 'high)
+-   `due_date` (Date, Nullable, Cast to Carbon Instance)
+-   `user_id` (Foregin Key -> users)
+-   `category_id` (Foregin Key -> categories, Nullable)
+-   `timestamps`
 
 ## 4. Testing Report
 
 I have implemented a comprehensive automated testing for unit tests and feature tests to ensure reliability and security without failed.
 
-**Unit Tests** (<mark>tests/Unit/</mark>)
+**Unit Tests** (`tests/Unit/`)
 Focused on Model logic and Database interactions.
 ![Unit test report](Unit_test.png)
 
-**Feature Tests** (<mark>tests/Feature/</mark>)
+**Feature Tests** (`tests/Feature/`)
 Focused on User Actions, Controllers and Security.
 ![Feature test report](Feature_test.png)
 
 **Total tests**: 29 passed ✅
+
 **Duration**: 8.38s ⏳
