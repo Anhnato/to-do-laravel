@@ -78,7 +78,7 @@
                     @foreach ($errors->all() as $error)
                         window.showToast("{{ $error }}", 'error');
                     @endforeach
-                                                });
+                                                    });
             </script>
         @endif
     </div>
@@ -95,8 +95,22 @@
                     <i
                         class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-amber-500 transition"></i>
                 </div>
-                <input type="text" x-model="search" placeholder="Search tasks..."
-                    class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-2xl leading-5 bg-white/50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-amber-400 focus:border-amber-400 sm:text-sm transition shadow-sm">
+                <form method="GET" action="{{ route('dashboard') }}" class="relative w-full max-w-md">
+
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                    </div>
+
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search tasks..."
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-2xl leading-5 bg-white/50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-amber-400 focus:border-amber-400 sm:text-sm transition shadow-sm">
+
+                    @if(request('search'))
+                        <a href="{{ route('dashboard') }}"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-400 hover:text-gray-600">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                    @endif
+                </form>
             </div>
 
             <div class="flex gap-3 items-center">

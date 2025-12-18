@@ -12,7 +12,7 @@
         </div>
 
         <div x-show="view === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <template x-for="task in filteredTasks" :key="task.id">
+            <template x-for="task in tasks" :key="task.id">
                 <div
                     class="bg-white p-6 rounded-3xl shadow-lg border border-yellow-100 hover:shadow-xl transition flex flex-col justify-between h-full group">
 
@@ -62,7 +62,7 @@
         </div>
 
         <div x-show="view === 'list'" class="flex flex-col gap-3">
-            <template x-for="task in filteredTasks" :key="task.id">
+            <template x-for="task in tasks" :key="task.id">
                 <div
                     class="bg-white p-4 rounded-2xl shadow-sm border border-yellow-100 hover:shadow-md transition flex flex-col md:flex-row md:items-center justify-between group gap-4">
                     <div class="flex items-start md:items-center gap-4 flex-1 min-w-0">

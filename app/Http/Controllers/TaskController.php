@@ -30,8 +30,16 @@ class TaskController extends Controller
         $tasks = Task::select(['id', 'title', 'status', 'priority', 'due_date', 'category_id', 'user_id'])
         ->where('user_id', $userId)
         ->with(['category:id,name'])
+        //Search logic
+        ->when($request->search, function($query, $search){
+            $query->where(function($q) use ($search){
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%");
+            });
+        })
         ->latest()
-        ->paginate(18);
+        ->paginate(18)
+        ->withQueryString(); //Keep the search term when click next page
 
         //return json for api, view for browser
         if($request->wantsJson()){
