@@ -33,10 +33,55 @@
         [x-cloak] {
             display: none !important;
         }
+
+        /* Toast Animation Classes - Modified for Bottom positioning */
+        .toast-enter {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        .toast-enter-active {
+            transform: translateY(0);
+            opacity: 1;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toast-exit {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-exit-active {
+            transform: translateY(100%);
+            opacity: 0;
+            transition: all 0.4s ease-in;
+        }
     </style>
 </head>
 
-<body class="bg-yellow-50 min-h-screen text-gray-800 font-sans" x-data="@yield('alpine-data')" x-cloak>
+<body class="bg-yellow-50 min-h-screen text-gray-800 font-sans relative" x-data="@yield('alpine-data')" x-cloak>
+
+    <div id="toast-container" style="bottom: 20px; left: 20px;"
+        class="fixed z-50 flex flex-col-reverse gap-3 w-auto max-w-sm pointer-events-none">
+
+        @if(session('success'))
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    window.showToast("{{ session('success') }}", 'success');
+                });
+            </script>
+        @endif
+
+        @if($errors->any())
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    @foreach ($errors->all() as $error)
+                        window.showToast("{{ $error }}", 'error');
+                    @endforeach
+                                            });
+            </script>
+        @endif
+    </div>
 
     <nav
         class="sticky top-0 z-40 bg-yellow-50/80 backdrop-blur-md border-b border-amber-100/50 shadow-sm transition-all duration-300">
@@ -82,6 +127,49 @@
     @yield('content')
 
     @stack('scripts')
+
+    <script>
+        window.showToast = function (message, type = 'success') {
+            const container = document.getElementById('toast-container');
+
+            // Create toast element
+            const toast = document.createElement('div');
+
+            // High Contrast Styling: Dark Background with Colored Icons
+            // bg-gray-900 (Dark) contrasts well with bg-yellow-50 (Light App)
+            const bgColor = type === 'success' ? 'text-green-600' : 'text-red-600';
+
+            const iconColor = type === 'success' ? 'text-yellow-300' : 'text-white';
+
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 pointer-events-auto toast-enter w-auto max-w-[280px]`;
+
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-check' : 'fa-triangle-exclamation'} ${iconColor} text-lg text-green-600"></i>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium text-sm leading-tight break-words text-gray-800">${message}</p>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white shrink-0">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+
+            // Append to container
+            container.appendChild(toast);
+
+            // Trigger animation
+            requestAnimationFrame(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-enter-active');
+            });
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('toast-enter-active');
+                toast.classList.add('toast-exit-active');
+                setTimeout(() => toast.remove(), 500); // Wait for fade out
+            }, 4000);
+        }
+    </script>
 
 </body>
 

@@ -105,10 +105,10 @@ class TaskController extends Controller
         $task->update($validated);
 
         if($request->wantsJson()){
-            return response()->json($task, 200);
+            return response()->json($task->load('category'), 200);
         }
 
-        return response()->json($task->load('category'), 200);
+        return redirect()->route('dashboard')->with('success', 'Task Updated Successfully!');
     }
 
     /**
@@ -128,6 +128,10 @@ class TaskController extends Controller
 
         $task->delete();
 
-        return response()->json(null, 204);
+        if($request->wantsJson()){
+            return response()->json(['message'=>'Deleted'], 200);
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Task Deleted Successfully');
     }
 }

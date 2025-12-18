@@ -6,23 +6,6 @@
 
 @section('content')
     <main class="max-w-7xl mx-auto p-6 md:p-10 pb-24">
-
-        @if(session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
-                class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl relative mb-6">
-                <strong class="font-bold">Success!</strong> <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative mb-6">
-                <strong class="font-bold">Whoops!</strong>
-                <ul class="mt-2 list-disc list-inside">
-                    @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
-                </ul>
-            </div>
-        @endif
-
         <div x-show="search.length > 0 && filteredTasks.length === 0" class="text-center col-span-full py-10">
             <i class="fa-solid fa-ghost text-4xl text-gray-300 mb-3"></i>
             <p class="text-gray-500 text-lg">No tasks found.</p>
