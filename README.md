@@ -2,7 +2,7 @@
 
 ![Homepage](Homepage.png)
 
-## 1. Website Overview
+## Website Overview
 
 This project is a robust Task Management System built with **Laravel**. It allows users to organize their workflow by creating, updating, deleting and make category for tasks. The application ensures data security through user authentication and authorization, ensuring users can only manage their own tasks.
 
@@ -18,7 +18,7 @@ This project is a robust Task Management System built with **Laravel**. It allow
 -   **Authorization**: Strict policy enforcement prevents users from accessing or modifying other user's data.
 -   **Swappable View**: The tasks can be displayed with either list or grid views.
 
-## 2. Technology Stack
+## Technology Stack
 
 ### Backend
 
@@ -54,7 +54,7 @@ This project is a robust Task Management System built with **Laravel**. It allow
 -   **Eloquent ORM**: Laravel's built-in tool that provides an elegant, Active Record implementation for interacting with a database using a simple, expressive PHP syntax instead of writing raw SQL queries.
 -   **Database Indexing**: Optimized and faster query operations.
 
-## 3. Database Schema
+## Database Schema
 
 The application uses a relational database design with three core tables.
 
@@ -83,7 +83,7 @@ The application uses a relational database design with three core tables.
 -   `category_id` (Foregin Key -> categories, Nullable)
 -   `timestamps`
 
-## 4. Testing Report
+## Testing Report
 
 I have implemented a comprehensive automated testing for unit tests and feature tests to ensure reliability and security without failed.
 
@@ -103,6 +103,67 @@ Focused on User Actions, Controllers and Security.
 
 **Duration**: 8.38s ⏳
 
-## 5. Prototype
+## Setup & Installation
+
+### Prerequisites
+
+-   PHP 8.2+
+-   Composer
+-   Node.js & NPM (Optional, for building assets if not using CDN)
+
+### Installation Steps
+
+1. **Clone the repository**:
+
+```Bash
+git clone https://github.com/Anhnato/to-do-laravel.git
+cd to-do-laravel
+```
+
+2. **Install PHP dependencies**
+
+```Bash
+composer install
+```
+
+3. **Environment Setup**
+
+```Bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. **Database Migration**
+
+```Bash
+# Create the SQLite database file
+touch database/database.sqlite
+
+# Run migrations
+php artisan migrate
+```
+
+5. **Run Test**
+
+```Bash
+php artisan test
+```
+
+6. **Start the Server**
+
+```Bash
+php artisan serve
+```
+
+Visit `http:localhost:8000` in your browser
+
+## Key Optimizations
+
+-   **In-Memory Testing Database:** Configured `phpunit.xml` to use `:memory:` SQLite. This allows the entire test suite to run in miliseconds by avoiding slow disk I/O operations.
+-   **Factory Dependency Isolation:** Refactored `CategoryFactory` and `TaskFactory` to explicitly handle User generation. This prevents "N+1" creation loops and ensures `Foreign Key Integrity` violations do not occur during seed generation.
+-   **Strict Type Casting:** Implemented Eloquent Casting (`$casts`) on the Task model. This automatically converts database timestamps into `Carbon` instances, preventing date-format errors in the UI and Controllers.
+-   **Migration Order Strategy:** Renamed and reordered migration files (`Users` -> `Categories` -> `Tasks`) to ensure strict referential integrity. The database can now be wiped and rebuilt (`migrate:fresh`) without dependency errors.
+
+## Prototype
 
 ![Prototype](Prototype.png)
