@@ -1,6 +1,36 @@
 # ☀️ SunnyDay - Task Manager Application
 
-![Homepage](Homepage.png)
+## User Interface
+
+1. **Homepage (Grid view)**
+   ![Homepage](Homepage.png)
+
+2. **Homepage (List view)**
+   ![Homepage](<List view.png>)
+
+3. **Login**
+   ![Login](Login.png)
+
+4. **Register**
+   ![Register](Register.png)
+
+5. **New Task**
+   ![New Task](<New Task.png>)
+
+6. **New Category**
+   ![New Category](<New Category.png>)
+
+7. **View Task**
+   ![View](View.png)
+
+8. **Edit Task**
+   ![Edit](Edit.png)
+
+9. **Delete Task**
+   ![Delete](Delete.png)
+
+10. **404 Page**
+    ![404 page](404.png)
 
 ## Website Overview
 
