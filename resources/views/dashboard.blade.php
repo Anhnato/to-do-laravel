@@ -104,6 +104,10 @@
                 </div>
             </template>
         </div>
+
+        <div class="mt-8">
+            {{ $tasks->links() }}
+        </div>
     </main>
 
     <button @click="openModal('create')"

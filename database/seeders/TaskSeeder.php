@@ -15,7 +15,7 @@ class TaskSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::first();
+        $user = User::first() ?? User::factory()->create();
 
         $categories = Category::all();
 
@@ -25,13 +25,13 @@ class TaskSeeder extends Seeder
         }
 
         //Create 10 sample task for first user
-        foreach (range(1, 10) as $i){
+        foreach (range(1, 19) as $i){
             Task::create([
                 'title'=>'Sample Task $i',
-                'desciption'=>fake()->sentence(),
+                'description'=>fake()->sentence(),
                 'status'=> fake()->randomElement(['pending','completed']),
                 'priority'=>fake()->randomElement(['high', 'medium', 'low']),
-                'due_date'=>fake()->optional()->date(),
+                'due_date'=>fake()->dateTimeBetween('now', '+1 month'),
                 'user_id'=>$user->id,
                 'category_id'=>$categories->random()->id,
             ]);

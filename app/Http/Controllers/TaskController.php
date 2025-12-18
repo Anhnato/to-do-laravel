@@ -31,7 +31,7 @@ class TaskController extends Controller
         ->where('user_id', $userId)
         ->with(['category:id,name'])
         ->latest()
-        ->paginate(50);
+        ->paginate(18);
 
         //return json for api, view for browser
         if($request->wantsJson()){

@@ -15,7 +15,7 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $user = User::first() ?? User::factory()->create([
-            'enmail' => 'example@gmail.com',
+            'email' => 'example@gmail.com',
         ]);
 
         $categories = [
