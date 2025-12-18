@@ -1,5 +1,5 @@
 <template x-if="modalType === 'create'">
-    <form action="{{ route('task.store') }}" method="post" class="space-y-4">
+    <form action="{{ route('task.store') }}" method="post" @submit="isLoading = true" class="space-y-4">
         @csrf
         <input type="text" name="title" placeholder="Task Title" required
             class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 ring-amber-400 outline-none">

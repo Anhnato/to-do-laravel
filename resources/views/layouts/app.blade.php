@@ -78,7 +78,7 @@
                     @foreach ($errors->all() as $error)
                         window.showToast("{{ $error }}", 'error');
                     @endforeach
-                                            });
+                                                });
             </script>
         @endif
     </div>
@@ -168,6 +168,44 @@
                 toast.classList.add('toast-exit-active');
                 setTimeout(() => toast.remove(), 500); // Wait for fade out
             }, 4000);
+        }
+
+        // 2. SHOW LOADING (New Function)
+        window.showLoading = function (message = 'Processing...') {
+            const container = document.getElementById('toast-container');
+
+            // Prevent duplicate loading messages
+            if (document.getElementById('loading-toast')) return;
+
+            const toast = document.createElement('div');
+            toast.id = 'loading-toast'; // Specific ID so we can remove it later
+
+            // Blue background for "Neutral/Working" state
+            toast.className = `bg-blue-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 pointer-events-auto toast-enter w-auto max-w-[280px]`;
+
+            toast.innerHTML = `
+            <i class="fa-solid fa-circle-notch fa-spin text-white text-lg"></i>
+            <div class="flex-1 min-w-0">
+                <p class="font-medium text-sm leading-tight break-words">${message}</p>
+            </div>
+        `;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-enter-active');
+            });
+        }
+
+        // 3. HIDE LOADING (New Function)
+        window.hideLoading = function () {
+            const toast = document.getElementById('loading-toast');
+            if (toast) {
+                toast.classList.remove('toast-enter-active');
+                toast.classList.add('toast-exit-active');
+                setTimeout(() => toast.remove(), 500);
+            }
         }
     </script>
 

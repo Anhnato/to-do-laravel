@@ -254,10 +254,12 @@
                     } catch (e) { alert('Failed to delete category.'); }
                 },
                 async submitUpdate() {
+                    this.isLoading = true;
                     await fetch(`/tasks/${this.activeTask.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrfToken }, body: JSON.stringify(this.activeTask) });
                     location.reload();
                 },
                 async submitDelete() {
+                    this.isLoading = true;
                     await fetch(`/tasks/${this.activeTask.id}`, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': this.csrfToken } });
                     location.reload();
                 },
