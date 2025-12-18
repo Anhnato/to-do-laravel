@@ -78,7 +78,7 @@
                     @foreach ($errors->all() as $error)
                         window.showToast("{{ $error }}", 'error');
                     @endforeach
-                                                    });
+                                                            });
             </script>
         @endif
     </div>
@@ -114,12 +114,27 @@
             </div>
 
             <div class="flex gap-3 items-center">
-                <button @click="view = (view === 'grid' ? 'list' : 'grid')"
-                    class="bg-white hover:bg-gray-100 text-gray-800 font-bold py-2 px-3 md:py-3 md:px-4 rounded-2xl shadow-lg transition transform hover:scale-105 border border-gray-100"
-                    title="Switch View">
-                    <i class="fa-solid text-amber-500" :class="view === 'grid' ? 'fa-list' : 'fa-border-all'"></i>
-                </button>
+                <div class="bg-white border border-gray-200 p-1 rounded-xl flex items-center shadow-sm">
 
+                    <button @click="view = 'grid'"
+                        class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+                        :class="view === 'grid'
+            ? 'bg-amber-100 text-amber-700 shadow-sm'
+            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'">
+                        <i class="fa-solid fa-border-all"></i>
+                        <span>Grid</span>
+                    </button>
+
+                    <button @click="view = 'list'"
+                        class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+                        :class="view === 'list'
+            ? 'bg-amber-100 text-amber-700 shadow-sm'
+            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'">
+                        <i class="fa-solid fa-list"></i>
+                        <span>List</span>
+                    </button>
+
+                </div>
                 @auth
                     <form action="{{ route('logout') }}" method="post">
                         @csrf

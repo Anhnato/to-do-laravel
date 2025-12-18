@@ -149,7 +149,7 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('taskApp', (initialCategories, initialTasks) => ({
-                view: 'grid',
+                view: localStorage.getItem('viewPreference') || 'grid',
                 search: '',
                 modalOpen: false,
                 modalType: '',
@@ -168,6 +168,12 @@
                     high: 'bg-red-100 text-red-800',
                     medium: 'bg-blue-100 text-blue-800',
                     low: 'bg-green-100 text-green-800'
+                },
+
+                init() {
+                    this.$watch('view', (value) => {
+                        localStorage.setItem('viewPreference', value);
+                    });
                 },
 
                 get filteredTasks() {
