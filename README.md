@@ -199,8 +199,8 @@ Visit `http:localhost:8000` in your browser
 -   **Over-Fetching:** By default, Eloquent selects all columns (`SELECT *`). If user add a `description` column that contains huge paragraphs of text, but the "List View" only shows the `title` and `status`, we are wasting massive amounts of bandwidth carrying that description data around when it isn't needed so I make the system explicitly select only the columns user need for the list.
 -   **Data Integrity:** When user delete category, the two database write operations sequentially.
 
-1. Update Tasks (Set caategory to null).
-2. Delete Category. Risk: If the server crashes or loses power specifically after step 1 but before step 2, the tasks are updated, but the category is **not deleted**. You now have "orphaned" data logic. We fix that by warpping multi-step database changes in a **Trasaction**. This ensure "All or nothing".
+1. Update Tasks (Set category to null).
+2. Delete Category. Risk: If the server crashes or loses power specifically after step 1 but before step 2, the tasks are updated, but the category is **not deleted**. You now have "orphaned" data logic. We fix that by warpping multi-step database changes in a **Transaction**. This ensure "All or nothing".
 
 -   **The "N+1 Query"**: When user fetch task list, the controller will execute 1 extra SQL query for every single task (e.g 100 tasks = 101 SQL queries). The fix: `with()` is always present when fetching list
 
