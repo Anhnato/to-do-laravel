@@ -7,12 +7,13 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TaskLifecycleTest extends TestCase
 {
     use RefreshDatabase;
-    /** @test */
+    #[Test()]
     public function a_user_can_update_their_own_task()
     {
         $user = User::factory()->create();
@@ -32,7 +33,7 @@ class TaskLifecycleTest extends TestCase
         ]);
 
         //Assert redirect usually means success in Laravel Controllers
-        $response->assertStatus(200);
+        $response->assertStatus(302);
 
         //Check database
         $this->assertDatabaseHas('tasks', [
@@ -42,7 +43,7 @@ class TaskLifecycleTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test()]
     public function a_user_can_delete_their_task(){
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
@@ -51,7 +52,7 @@ class TaskLifecycleTest extends TestCase
         $response = $this->actingAs($user)->delete(route('task.destroy', $task));
 
         //Asssert
-        $response->assertStatus(204);
+        $response->assertStatus(302);
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
     }
 }

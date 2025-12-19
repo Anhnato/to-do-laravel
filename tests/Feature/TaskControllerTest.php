@@ -9,12 +9,13 @@ use App\Notifications\TaskCreated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Notification;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TaskControllerTest extends TestCase
 {
     use RefreshDatabase;
-    /** @test */
+    #[Test()]
     public function guest_cannot_manage_tasks(): void
     {
         $this->get('/')->assertRedirect(route('login'));
@@ -22,7 +23,7 @@ class TaskControllerTest extends TestCase
         $this->delete(route('task.destroy', 1))->assertRedirect(route('login'));
     }
 
-    /** @test */
+    #[Test()]
     public function user_can_view_only_their_own_tasks(){
         $userA = User::factory()->create();
         $taskA = Task::factory()->create(['user_id' => $userA->id, 'title' => 'User A Task']);
@@ -36,7 +37,7 @@ class TaskControllerTest extends TestCase
         $response->assertDontSee('User B Task');
     }
 
-    /** @test */
+    #[Test()]
     public function task_creation_validates_required_fields(){
         $user = User::factory()->create();
 
@@ -48,7 +49,7 @@ class TaskControllerTest extends TestCase
         $response->assertSessionHasErrors(['title', 'status']);
     }
 
-    /** @test */
+    #[Test()]
     public function user_can_create_task_and_notifcation_is_sent(){
         Notification::fake();
 
@@ -81,7 +82,7 @@ class TaskControllerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test()]
     public function user_can_update_their_task(){
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
@@ -94,7 +95,7 @@ class TaskControllerTest extends TestCase
             'category_id' => $task->category_id
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(302);
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
             'title' => 'Updated Title',
@@ -102,7 +103,7 @@ class TaskControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test()]
     public function user_cannot_update_other_tasks_security_check(){
         $userA = User::factory()->create();
         $taskA = Task::factory()->create(['user_id' => $userA->id, 'title' => 'Original']);
@@ -123,18 +124,18 @@ class TaskControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test()]
     public function user_can_delete_task(){
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
 
         $response = $this->actingAs($user)->delete(route('task.destroy', $task));
 
-        $response->assertStatus(204);
+        $response->assertStatus(302);
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
     }
 
-    /** @test */
+    #[Test()]
     public function user_can_create_task_and_notification_is_queued(){
         Notification::fake();
 

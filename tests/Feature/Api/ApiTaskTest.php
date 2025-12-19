@@ -7,13 +7,14 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ApiTaskTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test()]
     public function user_can_login_and_get_token()
     {
         $user = User::factory()->create([
@@ -31,7 +32,7 @@ class ApiTaskTest extends TestCase
         ->assertJsonStructure(['token']);
     }
 
-    /** @test */
+    #[Test()]
     public function login_fails_with_bad_credentials(){
         $user = User::factory()->create(['password' => bcrypt('correct')]);
 
@@ -45,7 +46,7 @@ class ApiTaskTest extends TestCase
         ->assertJsonValidationErrors(['email']);
     }
 
-    /** @test */
+    #[Test()]
     public function user_can_fetch_their_tasks(){
         $user = User::factory()->create();
         Task::factory()->create(['user_id' => $user->id, 'title' => 'My Task']);
@@ -58,7 +59,7 @@ class ApiTaskTest extends TestCase
         ->assertJsonFragment(['title' => 'My Task']);
     }
 
-    /** @test */
+    #[Test()]
     public function user_can_create_task_via_api(){
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['tasks:write']);
@@ -74,7 +75,7 @@ class ApiTaskTest extends TestCase
         $this->assertDatabaseHas('tasks', ['title' => 'API Task']);
     }
 
-    /** @test */
+    #[Test()]
     public function read_only_token_cannot_delete_task(){
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
@@ -88,7 +89,7 @@ class ApiTaskTest extends TestCase
         $this->assertDatabaseHas('tasks', ['id' => $task->id]);
     }
 
-    /** @test */
+    #[Test()]
     public function user_cannot_access_others_tasks_even_with_valid_token(){
         $userA = User::factory()->create();
         $userB = User::factory()->create();

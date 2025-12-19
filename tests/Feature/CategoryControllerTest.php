@@ -6,12 +6,13 @@ use App\Models\Category;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CategoryControllerTest extends TestCase
 {
     use RefreshDatabase;
-    /** @test */
+    #[Test()]
     public function user_can_create_category(): void
     {
         $user = User::factory()->create();
@@ -26,7 +27,7 @@ class CategoryControllerTest extends TestCase
         $this->assertDatabaseHas('categories', ['name' => 'Work Projects']);
     }
 
-    /** @test */
+    #[Test()]
     public function duplicate_categories_are_not_allowed(){
         $user = User::factory()->create();
         Category::create(['name' => 'Work', 'user_id' => $user->id]);
@@ -39,7 +40,7 @@ class CategoryControllerTest extends TestCase
         $response->assertJsonValidationErrors(['name']);
     }
 
-    /** @test */
+    #[Test()]
     public function deleting_a_category_sets_related_tasks_to_null(){
         $user = User::factory()->create();
         $category = Category::factory()->create(['user_id' => $user->id]);

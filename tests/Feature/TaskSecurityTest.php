@@ -6,12 +6,13 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TaskSecurityTest extends TestCase
 {
     use RefreshDatabase;
-    /** @test */
+    #[Test()]
     public function user_cannot_update_another_users_task(): void
     {
         //Attack
@@ -41,7 +42,7 @@ class TaskSecurityTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test()]
         public function user_cannot_delete_another_users_task(){
             $attacker = User::factory()->create();
             $victim = User::factory()->create();

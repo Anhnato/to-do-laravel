@@ -7,12 +7,13 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TaskModelTest extends TestCase
 {
     use RefreshDatabase;
-    /** @test */
+    #[Test()]
     public function it_casts_due_date_to_carbon_instance()
     {
         $user = User::factory()->create();
@@ -35,7 +36,7 @@ class TaskModelTest extends TestCase
         $this->assertEquals('25-12-2025', $task->due_date->format('d-m-Y'));
     }
 
-    /** @test */
+    #[Test()]
     public function it_belongs_to_a_user(){
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
@@ -44,7 +45,7 @@ class TaskModelTest extends TestCase
         $this->assertEquals($user->id, $task->user->id);
     }
 
-    /** @test */
+    #[Test()]
     public function it_can_have_a_category(){
         $user = User::factory()->create();
 
@@ -62,7 +63,7 @@ class TaskModelTest extends TestCase
         $this->assertEquals('Development', $task->category->name);
     }
 
-    /** @test */
+    #[Test()]
     public function it_can_have_no_category(){
         $task = Task::factory()->create(['category_id' => null]);
 
