@@ -127,9 +127,10 @@ Focused on Model logic and Database interactions.
 
 Focused on User Actions, Controllers and Security.
 
-![Feature test report](Feature_test.png)
+![Feature Test 1](Feature_test_1.png)
+![Feature Test 2](Feature_test_2.png)
 
-**Total tests**: 29 passed ✅
+**Total tests**: 34 passed ✅
 
 **Duration**: 8.38s ⏳
 
