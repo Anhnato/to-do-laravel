@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class TaskCreated extends Notification implements ShouldQueue
 {
-    use Queueable; //Handle tthe queue logic
+    use Queueable; //Handle the queue logic
 
     protected $task;
 
