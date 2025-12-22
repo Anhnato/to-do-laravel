@@ -229,6 +229,14 @@ Visit `http:localhost:8000` in your browser
 
     ![Data Integrity](<Screenshot 2025-12-21 225906.png>)
 
+## Caching
+
+-   **Save prefered views (grid/list) when switching page:** When the switch to next page with pagination feature the view reset to the default grid view so I set up caching to keep their prefered view on the next page.
+
+![Prefered view 1](<Screenshot 2025-12-22 104418.png>)
+
+![Prefered view 2](<Screenshot 2025-12-22 104424.png>)
+
 ## Prototype
 
 ![Prototype](Prototype.png)
