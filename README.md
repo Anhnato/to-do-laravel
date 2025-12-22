@@ -195,31 +195,39 @@ Visit `http:localhost:8000` in your browser
 ## Key Optimizations
 
 -   **In-Memory Testing Database:** Configured `phpunit.xml` to use `:memory:` SQLite. This allows the entire test suite to run in miliseconds by avoiding slow disk I/O operations.
+
     ![In-memorry](<Screenshot 2025-12-21 212039.png>)
 
 -   **Factory Dependency Isolation:** Refactored `CategoryFactory` and `TaskFactory` to explicitly handle User generation. This prevents "N+1" creation loops and ensures `Foreign Key Integrity` violations do not occur during seed generation.
+
     ![Factory Dependency Isolation](<Screenshot 2025-12-21 222504.png>)
 
 -   **Strict Type Casting:** Implemented Eloquent Casting (`$casts`) on the Task model. This automatically converts database timestamps into `Carbon` instances, preventing date-format errors in the UI and Controllers.
+
     ![Type Casting](<Screenshot 2025-12-21 223743.png>)
 
 -   **Migration Order Strategy:** Renamed and reordered migration files (`Users` -> `Categories` -> `Tasks`) to ensure strict referential integrity. The database can now be wiped and rebuilt (`migrate:fresh`) without dependency errors.
+
     ![Order](<Screenshot 2025-12-21 223929.png>)
 
 -   **Mark `Notification` class as "Queueable"**: Implement Asynchronous Logic on Slack notification. If Slack is slow or down, when users create a task they can avoid staring at the loading spinner for 10 seconds.
+
     ![Queable](<Screenshot 2025-12-21 224108.png>)
 
 -   **Server-Side Pagination:** Avoid Memory Bloat. If user has 5,000 tasks, instead of fetching 5,000 rows from SQL it only fetch the first 18 tasks and display the rest if user move to next page.
+
     ![Paagination](<Screenshot 2025-12-21 224430.png>)
 
 -   **Over-Fetching:** By default, Eloquent selects all columns (`SELECT *`). If user add a `description` column that contains huge paragraphs of text, but the "List View" only shows the `title` and `status`, we are wasting massive amounts of bandwidth carrying that description data around when it isn't needed so I make the system explicitly select only the columns user need for the list.
+
     ![Over-fetching](<Screenshot 2025-12-21 224651.png>)
 
 -   **Data Integrity:** When user delete category, the two database write operations sequentially.
 
 1. Update Tasks (Set category to null).
 2. Delete Category. Risk: If the server crashes or loses power specifically after step 1 but before step 2, the tasks are updated, but the category is **not deleted**. You now have "orphaned" data logic. We fix that by warpping multi-step database changes in a **Transaction**. This ensure "All or nothing".
-   ![Data Integrity](<Screenshot 2025-12-21 225906.png>)
+
+    ![Data Integrity](<Screenshot 2025-12-21 225906.png>)
 
 ## Prototype
 
