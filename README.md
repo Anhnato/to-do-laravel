@@ -2,7 +2,7 @@
 
 ## Contributor
 
-Nguyen Huu Huy Anh - 21CSE - 21020004
+**Nguyen Huu Huy Anh - 21CSE - 21020004**
 
 ## User Interface
 
