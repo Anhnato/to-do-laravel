@@ -1,5 +1,9 @@
 # ☀️ SunnyDay - Task Manager Application
 
+## Contributor
+
+Nguyen Huu Huy Anh - 21CSE - 21020004
+
 ## User Interface
 
 1. **Homepage (Grid view)**
